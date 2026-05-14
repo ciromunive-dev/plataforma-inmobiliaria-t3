@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout";
+import Link from "next/link";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -8,7 +9,6 @@ export default function Home() {
 
   return (
     <Layout>
-      {/* Welcome section */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">
           {session ? `Bienvenido, ${session.user?.name || session.user?.email}` : "Bienvenido"}
@@ -18,7 +18,6 @@ export default function Home() {
         </p>
       </div>
 
-      {/* Loading */}
       {isLoading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
@@ -32,20 +31,19 @@ export default function Home() {
         </div>
       )}
 
-      {/* Empty */}
       {!isLoading && properties && properties.length === 0 && (
         <div className="text-center py-20">
           <p className="text-gray-400 text-lg">No hay propiedades registradas aún.</p>
         </div>
       )}
 
-      {/* Properties grid */}
       {!isLoading && properties && properties.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {properties.map((property) => (
-            <div
+            <Link
               key={property.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow"
+              href={`/properties/${property.id}`}
+              className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow block"
             >
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 {property.title}
@@ -63,7 +61,7 @@ export default function Home() {
                 <span>🛁 {property.bathrooms} baños</span>
                 <span>📐 {property.area} m²</span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}

@@ -8,9 +8,9 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 
 async function main() {
-  // Crear usuario admin
   const hashedPassword = await bcrypt.hash("admin123", 10);
-  await prisma.user.upsert({
+
+  const admin = await prisma.user.upsert({
     where: { email: "admin@inmobiliaria.com" },
     update: {},
     create: {
@@ -20,11 +20,28 @@ async function main() {
     },
   });
 
-  // Propiedades de ejemplo
   await prisma.property.createMany({
     data: [
-      { title: "Casa en Miraflores", description: "Hermosa casa...", price: 450000, bedrooms: 3, bathrooms: 2, area: 150 },
-      { title: "Departamento en San Isidro", description: "Moderno depa...", price: 280000, bedrooms: 2, bathrooms: 1, area: 80 },
+      {
+        title: "Casa en Miraflores",
+        description: "Hermosa casa con jardín y cochera en zona exclusiva.",
+        price: 450000,
+        bedrooms: 3,
+        bathrooms: 2,
+        area: 150,
+        images: [],
+        userId: admin.id,
+      },
+      {
+        title: "Departamento en San Isidro",
+        description: "Moderno departamento con vista panorámica, cerca al centro financiero.",
+        price: 280000,
+        bedrooms: 2,
+        bathrooms: 1,
+        area: 80,
+        images: [],
+        userId: admin.id,
+      },
     ],
     skipDuplicates: true,
   });

@@ -6,25 +6,28 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navbar */}
       <nav className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
             <Link href="/" className="text-xl font-bold text-blue-600">
               Inmobiliaria
             </Link>
 
-            {/* User section */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               {session ? (
                 <>
-                  <span className="text-sm text-gray-700">
+                  <Link
+                    href="/properties/new"
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    + Publicar propiedad
+                  </Link>
+                  <span className="text-sm text-gray-500">
                     {session.user?.name || session.user?.email}
                   </span>
                   <button
                     onClick={() => signOut()}
-                    className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     Cerrar sesión
                   </button>
@@ -42,7 +45,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
 
-      {/* Page content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </main>

@@ -15,13 +15,15 @@ const initialFilters: Filters = { search: "", minPrice: "", maxPrice: "", bedroo
 
 export default function Home() {
   const { data: session } = useSession();
-  const { data: properties, isLoading } = api.property.getAll.useQuery();
+  const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<Filters>(initialFilters);
   const [showFilters, setShowFilters] = useState(false);
 
+  const { data, isLoading } = api.property.getAll.useQuery({ page });
+
   const filtered = useMemo(() => {
-    if (!properties) return [];
-    return properties.filter((p) => {
+    if (!data?.items) return [];
+    return data.items.filter((p) => {
       if (filters.search) {
         const q = filters.search.toLowerCase();
         if (!p.title.toLowerCase().includes(q) && !p.description.toLowerCase().includes(q)) return false;
@@ -31,13 +33,20 @@ export default function Home() {
       if (filters.bedrooms && p.bedrooms < Number(filters.bedrooms)) return false;
       return true;
     });
-  }, [properties, filters]);
+  }, [data?.items, filters]);
 
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
   const isFiltering = activeFilterCount > 0;
 
-  const set = (key: keyof Filters) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+  const set = (key: keyof Filters) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFilters((f) => ({ ...f, [key]: e.target.value }));
+    setPage(1);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const inputClass = "w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none";
 
@@ -47,9 +56,7 @@ export default function Home() {
         <h1 className="text-3xl font-bold text-gray-900">
           {session ? `Bienvenido, ${session.user?.name || session.user?.email}` : "Bienvenido"}
         </h1>
-        <p className="text-gray-500 mt-1">
-          Explora las propiedades disponibles en nuestra plataforma
-        </p>
+        <p className="text-gray-500 mt-1">Explora las propiedades disponibles en nuestra plataforma</p>
       </div>
 
       {/* Barra de búsqueda */}
@@ -79,7 +86,7 @@ export default function Home() {
           </button>
           {isFiltering && (
             <button
-              onClick={() => setFilters(initialFilters)}
+              onClick={() => { setFilters(initialFilters); setPage(1); }}
               className="px-4 py-2.5 rounded-lg border border-gray-300 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
             >
               Limpiar
@@ -113,7 +120,7 @@ export default function Home() {
       {/* Resultados */}
       {isLoading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-pulse">
               <div className="h-48 bg-gray-200" />
               <div className="p-5 space-y-3">
@@ -132,7 +139,7 @@ export default function Home() {
             <>
               <p className="text-gray-400 text-lg">No hay propiedades que coincidan con los filtros.</p>
               <button
-                onClick={() => setFilters(initialFilters)}
+                onClick={() => { setFilters(initialFilters); setPage(1); }}
                 className="text-blue-600 hover:underline mt-3 inline-block text-sm"
               >
                 Limpiar filtros
@@ -151,6 +158,7 @@ export default function Home() {
               {filtered.length} {filtered.length === 1 ? "propiedad encontrada" : "propiedades encontradas"}
             </p>
           )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((property) => (
               <Link
@@ -189,6 +197,41 @@ export default function Home() {
               </Link>
             ))}
           </div>
+
+          {/* Paginación */}
+          {!isFiltering && data && data.pageCount > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-10">
+              <button
+                onClick={() => handlePageChange(page - 1)}
+                disabled={page === 1}
+                className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                ← Anterior
+              </button>
+
+              {Array.from({ length: data.pageCount }, (_, i) => i + 1).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => handlePageChange(p)}
+                  className={`w-9 h-9 text-sm font-medium rounded-lg transition-colors ${
+                    p === page
+                      ? "bg-blue-600 text-white"
+                      : "border border-gray-300 hover:bg-gray-50 text-gray-700"
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+
+              <button
+                onClick={() => handlePageChange(page + 1)}
+                disabled={page === data.pageCount}
+                className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Siguiente →
+              </button>
+            </div>
+          )}
         </>
       )}
     </Layout>

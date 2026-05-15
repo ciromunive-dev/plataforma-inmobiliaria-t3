@@ -12,13 +12,29 @@ const propertyInput = z.object({
   images: z.array(z.string().url()).max(6).default([]),
 });
 
+const PAGE_SIZE = 9;
+
 export const propertyRouter = createTRPCRouter({
-  getAll: publicProcedure.query(async ({ ctx }) => {
-    return ctx.db.property.findMany({
-      orderBy: { createdAt: "desc" },
-      include: { user: { select: { name: true, email: true } } },
-    });
-  }),
+  getAll: publicProcedure
+    .input(z.object({ page: z.number().int().min(1).default(1) }))
+    .query(async ({ ctx, input }) => {
+      const skip = (input.page - 1) * PAGE_SIZE;
+      const [items, total] = await Promise.all([
+        ctx.db.property.findMany({
+          skip,
+          take: PAGE_SIZE,
+          orderBy: { createdAt: "desc" },
+          include: { user: { select: { name: true, email: true } } },
+        }),
+        ctx.db.property.count(),
+      ]);
+      return {
+        items,
+        total,
+        pageCount: Math.ceil(total / PAGE_SIZE),
+        page: input.page,
+      };
+    }),
 
   getById: publicProcedure
     .input(z.object({ id: z.number() }))

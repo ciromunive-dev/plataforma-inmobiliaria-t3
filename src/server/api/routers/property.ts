@@ -1,42 +1,47 @@
-import { z } from "zod"; 
-// Librería para validar datos de entrada (inputs)
+import { z } from "zod";
+import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { TRPCError } from "@trpc/server";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-// createTRPCRouter → crea un grupo de endpoints
-// publicProcedure → endpoint público (sin autenticación obligatoria)
+const propertyInput = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  price: z.number().positive(),
+  bedrooms: z.number().int().positive(),
+  bathrooms: z.number().int().positive(),
+  area: z.number().positive(),
+});
 
 export const propertyRouter = createTRPCRouter({
-  // Router que agrupa todas las rutas relacionadas a "property"
-
   getAll: publicProcedure.query(async ({ ctx }) => {
-    // Endpoint de tipo "query" (solo lectura)
-    // ctx = contexto (aquí tienes acceso a la base de datos)
-
-    const properties = await ctx.db.property.findMany();
-    // Prisma: trae todas las propiedades de la base de datos
-
-    return properties;
-    // Devuelve el resultado al frontend
+    return ctx.db.property.findMany({ orderBy: { createdAt: "desc" } });
   }),
 
   getById: publicProcedure
-    // Endpoint público
-
     .input(z.object({ id: z.number() }))
-    // Define y valida la entrada:
-    // espera un objeto con "id" de tipo number
-
     .query(async ({ ctx, input }) => {
-      // query = lectura
-      // ctx = base de datos
-      // input = datos validados (id)
+      return ctx.db.property.findUnique({ where: { id: input.id } });
+    }),
 
-      const property = await ctx.db.property.findUnique({
-        where: { id: input.id },
-        // Busca una sola propiedad por su ID
-      });
+  create: protectedProcedure
+    .input(propertyInput)
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.property.create({ data: input });
+    }),
 
-      return property;
-      // Devuelve la propiedad encontrada
+  update: protectedProcedure
+    .input(z.object({ id: z.number() }).merge(propertyInput))
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...data } = input;
+      const existing = await ctx.db.property.findUnique({ where: { id } });
+      if (!existing) throw new TRPCError({ code: "NOT_FOUND", message: "Propiedad no encontrada" });
+      return ctx.db.property.update({ where: { id }, data });
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const existing = await ctx.db.property.findUnique({ where: { id: input.id } });
+      if (!existing) throw new TRPCError({ code: "NOT_FOUND", message: "Propiedad no encontrada" });
+      return ctx.db.property.delete({ where: { id: input.id } });
     }),
 });

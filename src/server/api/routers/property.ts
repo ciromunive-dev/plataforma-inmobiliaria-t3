@@ -9,6 +9,7 @@ const propertyInput = z.object({
   bedrooms: z.number().int().positive(),
   bathrooms: z.number().int().positive(),
   area: z.number().positive(),
+  images: z.array(z.string().url()).max(6).default([]),
 });
 
 export const propertyRouter = createTRPCRouter({

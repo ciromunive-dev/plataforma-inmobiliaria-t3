@@ -21,17 +21,19 @@ export default function Home() {
       {isLoading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 animate-pulse">
-              <div className="h-4 bg-gray-200 rounded w-3/4 mb-4" />
-              <div className="h-3 bg-gray-200 rounded w-full mb-2" />
-              <div className="h-3 bg-gray-200 rounded w-2/3 mb-4" />
-              <div className="h-4 bg-gray-200 rounded w-1/2" />
+            <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-pulse">
+              <div className="h-48 bg-gray-200" />
+              <div className="p-5 space-y-3">
+                <div className="h-4 bg-gray-200 rounded w-3/4" />
+                <div className="h-3 bg-gray-200 rounded w-full" />
+                <div className="h-4 bg-gray-200 rounded w-1/2" />
+              </div>
             </div>
           ))}
         </div>
       )}
 
-      {!isLoading && properties && properties.length === 0 && (
+      {!isLoading && properties?.length === 0 && (
         <div className="text-center py-20">
           <p className="text-gray-400 text-lg">No hay propiedades registradas aún.</p>
         </div>
@@ -43,23 +45,41 @@ export default function Home() {
             <Link
               key={property.id}
               href={`/properties/${property.id}`}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow block"
+              className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow block"
             >
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {property.title}
-              </h3>
-              <p className="text-sm text-gray-500 mb-4 line-clamp-2">
-                {property.description}
-              </p>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xl font-bold text-blue-600">
-                  S/ {property.price.toLocaleString()}
-                </span>
+              {/* Imagen principal */}
+              <div className="h-48 bg-gray-100 overflow-hidden">
+                {property.images && property.images.length > 0 ? (
+                  <img
+                    src={property.images[0]}
+                    alt={property.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => (e.currentTarget.src = "https://placehold.co/400x200?text=Sin+imagen")}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="text-gray-400 text-sm">Sin imágenes</span>
+                  </div>
+                )}
               </div>
-              <div className="flex gap-4 text-sm text-gray-600">
-                <span>🛏️ {property.bedrooms} dorm.</span>
-                <span>🛁 {property.bathrooms} baños</span>
-                <span>📐 {property.area} m²</span>
+
+              <div className="p-5">
+                <h3 className="text-lg font-semibold text-gray-900 mb-1 truncate">
+                  {property.title}
+                </h3>
+                <p className="text-sm text-gray-500 mb-4 line-clamp-2">
+                  {property.description}
+                </p>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xl font-bold text-blue-600">
+                    S/ {property.price.toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex gap-4 text-sm text-gray-600">
+                  <span>🛏️ {property.bedrooms} dorm.</span>
+                  <span>🛁 {property.bathrooms} baños</span>
+                  <span>📐 {property.area} m²</span>
+                </div>
               </div>
             </Link>
           ))}

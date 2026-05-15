@@ -5,7 +5,6 @@ import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
-
 export default function PropertyDetailPage() {
   const router = useRouter();
   const id = Number(router.query.id);
@@ -33,7 +32,6 @@ export default function PropertyDetailPage() {
       });
     }
   }, [property]);
-
 
   const utils = api.useUtils();
 
@@ -73,6 +71,8 @@ export default function PropertyDetailPage() {
     );
   }
 
+  const isOwner = session?.user?.id === String(property.userId);
+
   const handleUpdate = (e: React.FormEvent) => {
     e.preventDefault();
     updateMutation.mutate({
@@ -99,7 +99,7 @@ export default function PropertyDetailPage() {
           <>
             <div className="flex items-start justify-between mb-2">
               <h1 className="text-3xl font-bold text-gray-900">{property.title}</h1>
-              {session && (
+              {isOwner && (
                 <div className="flex gap-2 ml-4 shrink-0">
                   <button
                     onClick={() => setEditing(true)}
@@ -128,6 +128,12 @@ export default function PropertyDetailPage() {
             </div>
 
             <p className="text-gray-700 leading-relaxed">{property.description}</p>
+
+            {property.user && (
+              <p className="text-xs text-gray-400 mt-6">
+                Publicado por {property.user.name ?? property.user.email}
+              </p>
+            )}
           </>
         ) : (
           <form onSubmit={handleUpdate} className="space-y-5 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
@@ -180,7 +186,6 @@ export default function PropertyDetailPage() {
           </form>
         )}
 
-        {/* Modal confirmar eliminación */}
         {confirmDelete && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full mx-4">

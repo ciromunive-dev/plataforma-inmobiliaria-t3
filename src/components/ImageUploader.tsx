@@ -28,6 +28,13 @@ export default function ImageUploader({ images, onChange, folder }: Props) {
       return;
     }
 
+    // Validar tamaño máximo 5MB por archivo
+    const oversized = Array.from(files).find((f) => f.size > 5 * 1024 * 1024);
+    if (oversized) {
+      setError("Cada imagen debe pesar menos de 5MB.");
+      return;
+    }
+
     const selected = Array.from(files).slice(0, remaining);
     setUploading(true);
     setError("");

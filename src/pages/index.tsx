@@ -23,7 +23,7 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const inputClass = "w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white";
+  const inputClass = "w-full px-3 py-3 sm:py-2.5 border border-gray-300 rounded-lg text-base sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white";
 
   const avgPrice = data?.items?.length
     ? Math.round(data.items.reduce((acc, p) => acc + p.price, 0) / data.items.length)
@@ -44,61 +44,62 @@ export default function Home() {
       </div>
 
       {!isLoading && data && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
           {[
             { label: "Total propiedades", value: data.total },
             { label: "En esta página", value: data.items.length },
             { label: "Precio promedio", value: `S/ ${avgPrice.toLocaleString()}` },
             { label: "Páginas", value: data.pageCount },
           ].map((stat) => (
-            <div key={stat.label} className="bg-white rounded-xl border border-gray-200 px-4 py-3">
-              <p className="text-xs text-gray-500">{stat.label}</p>
-              <p className="text-xl font-bold text-gray-900 mt-0.5">{stat.value}</p>
+            <div key={stat.label} className="bg-white rounded-xl border border-gray-200 px-3 sm:px-4 py-3">
+              <p className="text-xs text-gray-500 truncate">{stat.label}</p>
+              <p className="text-lg sm:text-xl font-bold text-gray-900 mt-0.5">{stat.value}</p>
             </div>
           ))}
         </div>
       )}
 
-      <div className="bg-white border border-gray-200 rounded-xl p-3 mb-5 space-y-3">
-        <div className="flex gap-2">
+      <div className="bg-white border border-gray-200 rounded-xl p-3 sm:p-4 mb-5 space-y-3">
+        <div className="flex gap-2 flex-wrap sm:flex-nowrap">
           <input
             type="text"
             placeholder="Buscar por título o descripción..."
             value={filters.search}
             onChange={setFilter("search")}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="flex-1 min-w-0 px-3 py-3 sm:py-2.5 border border-gray-300 rounded-lg text-base sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
           />
-          <Button
-            variant={showFilters || activeFilterCount > 0 ? "primary" : "outline"}
-            onClick={() => setShowFilters((v) => !v)}
-          >
-            ⚙ Filtros
-            {activeFilterCount > 0 && (
-              <span className="bg-white text-blue-600 text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
-                {activeFilterCount}
-              </span>
+          <div className="flex gap-2">
+            <Button
+              variant={showFilters || activeFilterCount > 0 ? "primary" : "outline"}
+              onClick={() => setShowFilters((v) => !v)}
+            >
+              ⚙ Filtros
+              {activeFilterCount > 0 && (
+                <span className="bg-white text-blue-600 text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                  {activeFilterCount}
+                </span>
+              )}
+            </Button>
+            {isFiltering && (
+              <Button variant="outline" onClick={clearFilters}>Limpiar</Button>
             )}
-          </Button>
-          {isFiltering && (
-            <Button variant="outline" onClick={clearFilters}>Limpiar</Button>
-          )}
-
-          <div className="flex border border-gray-300 rounded-lg overflow-hidden">
-            <button
-              onClick={() => setViewMode("grid")}
-              className={`px-3 py-2 text-sm transition-colors ${viewMode === "grid" ? "bg-gray-100 text-gray-900" : "text-gray-500 hover:bg-gray-50"}`}
-              aria-label="Vista en grilla"
-            >⊞</button>
-            <button
-              onClick={() => setViewMode("list")}
-              className={`px-3 py-2 text-sm border-l border-gray-300 transition-colors ${viewMode === "list" ? "bg-gray-100 text-gray-900" : "text-gray-500 hover:bg-gray-50"}`}
-              aria-label="Vista en lista"
-            >☰</button>
+            <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`min-h-[44px] px-3 text-sm transition-colors ${viewMode === "grid" ? "bg-gray-100 text-gray-900" : "text-gray-500 hover:bg-gray-50"}`}
+                aria-label="Vista en grilla"
+              >⊞</button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`min-h-[44px] px-3 text-sm border-l border-gray-300 transition-colors ${viewMode === "list" ? "bg-gray-100 text-gray-900" : "text-gray-500 hover:bg-gray-50"}`}
+                aria-label="Vista en lista"
+              >☰</button>
+            </div>
           </div>
         </div>
 
         {showFilters && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-gray-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2 border-t border-gray-100">
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Precio mínimo (S/)</label>
               <input type="number" placeholder="0" value={filters.minPrice} onChange={setFilter("minPrice")} className={inputClass} />
@@ -107,7 +108,7 @@ export default function Home() {
               <label className="block text-xs font-medium text-gray-600 mb-1">Precio máximo (S/)</label>
               <input type="number" placeholder="Sin límite" value={filters.maxPrice} onChange={setFilter("maxPrice")} className={inputClass} />
             </div>
-            <div>
+            <div className="sm:col-span-2 lg:col-span-1">
               <label className="block text-xs font-medium text-gray-600 mb-1">Dormitorios mínimos</label>
               <select value={filters.bedrooms} onChange={setFilter("bedrooms")} className={inputClass}>
                 <option value="">Cualquiera</option>
@@ -134,7 +135,7 @@ export default function Home() {
       )}
 
       {!isLoading && filtered.length === 0 && (
-        <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
+        <div className="text-center py-16 sm:py-20 bg-white rounded-xl border border-gray-200">
           {isFiltering ? (
             <>
               <p className="text-gray-400">No hay propiedades que coincidan con los filtros.</p>
@@ -192,7 +193,7 @@ export default function Home() {
               {filtered.map((property) => (
                 <Link key={property.id} href={`/properties/${property.id}`}
                   className="bg-white rounded-xl border border-gray-200 hover:shadow-sm hover:border-gray-300 transition-all flex overflow-hidden group">
-                  <div className="relative w-36 shrink-0 bg-gray-100">
+                  <div className="relative w-28 sm:w-36 shrink-0 bg-gray-100">
                     {property.images?.[0] ? (
                       <Image src={property.images[0]} alt={property.title} fill className="object-cover" sizes="144px" />
                     ) : (
@@ -201,13 +202,13 @@ export default function Home() {
                       </div>
                     )}
                   </div>
-                  <div className="p-4 flex flex-col justify-between flex-1 min-w-0">
+                  <div className="p-3 sm:p-4 flex flex-col justify-between flex-1 min-w-0">
                     <div>
                       <h3 className="font-semibold text-gray-900 truncate">{property.title}</h3>
-                      <p className="text-xs text-gray-500 mt-1 line-clamp-1">{property.description}</p>
+                      <p className="text-xs text-gray-500 mt-1 line-clamp-2 sm:line-clamp-1">{property.description}</p>
                     </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <div className="flex gap-3 text-xs text-gray-500">
+                    <div className="flex items-center justify-between mt-2 flex-wrap gap-1">
+                      <div className="flex gap-2 sm:gap-3 text-xs text-gray-500">
                         <span>🛏 {property.bedrooms}</span>
                         <span>🛁 {property.bathrooms}</span>
                         <span>📐 {property.area} m²</span>
@@ -221,13 +222,13 @@ export default function Home() {
           )}
 
           {!isFiltering && data && data.pageCount > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-8">
+            <div className="flex items-center justify-center gap-1 sm:gap-2 mt-8 flex-wrap">
               <Button variant="outline" onClick={() => handlePageChange(page - 1)} disabled={page === 1}>
                 ← Anterior
               </Button>
               {Array.from({ length: data.pageCount }, (_, i) => i + 1).map((p) => (
                 <button key={p} onClick={() => handlePageChange(p)}
-                  className={`w-8 h-8 text-sm rounded-lg transition-colors ${p === page ? "bg-blue-600 text-white" : "border border-gray-300 hover:bg-gray-50 text-gray-700"}`}>
+                  className={`w-10 h-10 text-sm rounded-lg transition-colors ${p === page ? "bg-blue-600 text-white" : "border border-gray-300 hover:bg-gray-50 text-gray-700"}`}>
                   {p}
                 </button>
               ))}

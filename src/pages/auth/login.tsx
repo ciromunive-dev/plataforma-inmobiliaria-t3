@@ -39,7 +39,7 @@ export default function LoginPage() {
 
   return (
     <Layout>
-      <div className="min-h-[80vh] flex items-center justify-center">
+      <div className="min-h-[80vh] flex items-center justify-center px-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-6">
             <span className="text-4xl">🏡</span>

@@ -71,7 +71,7 @@ export default function NewPropertyPage() {
 
             <div>
               <p className="text-sm font-medium text-gray-700 mb-2">Características</p>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <Input label="Dormitorios" type="number" value={form.bedrooms} onChange={set("bedrooms")} error={fieldErrors.bedrooms} placeholder="3" />
                 <Input label="Baños" type="number" value={form.bathrooms} onChange={set("bathrooms")} error={fieldErrors.bathrooms} placeholder="2" />
                 <Input label="Área (m²)" type="number" value={form.area} onChange={set("area")} error={fieldErrors.area} placeholder="90" />

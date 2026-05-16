@@ -62,7 +62,6 @@ export default function PropertyDetailPage() {
 
         {!editing ? (
           <>
-            {/* Galería */}
             {property.images && property.images.length > 0 ? (
               <div className="mb-6">
                 <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-gray-100 mb-2">
@@ -76,12 +75,12 @@ export default function PropertyDetailPage() {
                   />
                 </div>
                 {property.images.length > 1 && (
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
                     {property.images.map((url, i) => (
                       <button
                         key={i}
                         onClick={() => setActiveImage(i)}
-                        className={`relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
+                        className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden border-2 transition-colors ${
                           activeImage === i ? "border-blue-500" : "border-transparent"
                         }`}
                       >
@@ -97,11 +96,10 @@ export default function PropertyDetailPage() {
               </div>
             )}
 
-            {/* Título y acciones */}
-            <div className="flex items-start justify-between mb-3">
-              <h1 className="text-3xl font-bold text-gray-900">{property.title}</h1>
+            <div className="flex items-start justify-between mb-3 flex-wrap gap-3">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{property.title}</h1>
               {isOwner && (
-                <div className="flex gap-2 ml-4 shrink-0">
+                <div className="flex gap-2 shrink-0">
                   <Button variant="outline" onClick={() => setEditing(true)}>
                     Editar
                   </Button>
@@ -112,13 +110,11 @@ export default function PropertyDetailPage() {
               )}
             </div>
 
-            {/* Precio */}
             <p className="text-2xl font-bold text-blue-600 mb-5">
               S/ {property.price.toLocaleString()}
             </p>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-3 mb-6">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6">
               {[
                 { icon: "🛏️", label: "Dormitorios", value: property.bedrooms },
                 { icon: "🛁", label: "Baños", value: property.bathrooms },
@@ -126,13 +122,12 @@ export default function PropertyDetailPage() {
               ].map((s) => (
                 <Card key={s.label} padding="sm" className="text-center">
                   <p className="text-xl">{s.icon}</p>
-                  <p className="text-lg font-bold text-gray-900">{s.value}</p>
+                  <p className="text-base sm:text-lg font-bold text-gray-900">{s.value}</p>
                   <p className="text-xs text-gray-500">{s.label}</p>
                 </Card>
               ))}
             </div>
 
-            {/* Descripción */}
             <Card padding="md" className="mb-4">
               <p className="text-gray-700 leading-relaxed">{property.description}</p>
             </Card>
@@ -168,7 +163,7 @@ export default function PropertyDetailPage() {
               />
               <div>
                 <p className="text-sm font-medium text-gray-700 mb-2">Características</p>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <Input label="Dormitorios" type="number" value={form.bedrooms}
                     onChange={(e) => setForm((f) => ({ ...f, bedrooms: e.target.value }))} required />
                   <Input label="Baños" type="number" value={form.bathrooms}
@@ -180,7 +175,7 @@ export default function PropertyDetailPage() {
 
               <ImageUploader images={images} onChange={setImages} folder={String(id)} />
 
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Button type="submit" fullWidth loading={updateMutation.isPending}>
                   Guardar cambios
                 </Button>
@@ -192,13 +187,12 @@ export default function PropertyDetailPage() {
           </Card>
         )}
 
-        {/* Modal eliminar */}
         {confirmDelete && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <Card className="max-w-sm w-full mx-4">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <Card className="max-w-sm w-full">
               <h3 className="text-lg font-bold text-gray-900 mb-2">¿Eliminar propiedad?</h3>
               <p className="text-sm text-gray-500 mb-6">Esta acción no se puede deshacer.</p>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Button
                   variant="danger"
                   fullWidth

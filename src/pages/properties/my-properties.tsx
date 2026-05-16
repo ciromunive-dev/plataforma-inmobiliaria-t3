@@ -50,7 +50,7 @@ export default function MyPropertiesPage() {
         <title>Mis propiedades | Plataforma Inmobiliaria</title>
       </Head>
 
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-start sm:items-center justify-between mb-6 flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Mis propiedades</h1>
           <p className="text-sm text-gray-500 mt-0.5">
@@ -63,7 +63,7 @@ export default function MyPropertiesPage() {
       </div>
 
       {myProperties.length === 0 ? (
-        <Card className="py-20 text-center">
+        <Card className="py-16 sm:py-20 text-center">
           <p className="text-gray-400 mb-4">Aún no has publicado ninguna propiedad.</p>
           <Link href="/properties/new" className="text-blue-600 hover:underline text-sm">
             Publicar mi primera propiedad
@@ -72,10 +72,10 @@ export default function MyPropertiesPage() {
       ) : (
         <div className="flex flex-col gap-3">
           {myProperties.map((property) => (
-            <Card key={property.id} padding="sm" className="flex overflow-hidden hover:shadow-sm transition-shadow">
-              <div className="relative w-32 shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+            <Card key={property.id} padding="sm" className="flex flex-col sm:flex-row overflow-hidden hover:shadow-sm transition-shadow">
+              <div className="relative w-full h-40 sm:w-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden">
                 {property.images?.[0] ? (
-                  <Image src={property.images[0]} alt={property.title} fill className="object-cover" sizes="128px" />
+                  <Image src={property.images[0]} alt={property.title} fill className="object-cover" sizes="(max-width: 640px) 100vw, 128px" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <span className="text-gray-400 text-xs">Sin foto</span>
@@ -83,11 +83,11 @@ export default function MyPropertiesPage() {
                 )}
               </div>
 
-              <div className="flex-1 p-4 flex items-center justify-between min-w-0">
+              <div className="flex-1 p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between min-w-0 gap-3">
                 <div className="min-w-0">
                   <h3 className="font-semibold text-gray-900 truncate">{property.title}</h3>
                   <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{property.description}</p>
-                  <div className="flex gap-3 text-xs text-gray-400 mt-2">
+                  <div className="flex flex-wrap gap-2 sm:gap-3 text-xs text-gray-400 mt-2">
                     <span>🛏 {property.bedrooms}</span>
                     <span>🛁 {property.bathrooms}</span>
                     <span>📐 {property.area} m²</span>
@@ -95,7 +95,7 @@ export default function MyPropertiesPage() {
                   </div>
                 </div>
 
-                <div className="flex gap-2 ml-4 shrink-0">
+                <div className="flex gap-2 shrink-0 flex-wrap">
                   <Link href={`/properties/${property.id}`}>
                     <Button variant="outline">Ver / Editar</Button>
                   </Link>

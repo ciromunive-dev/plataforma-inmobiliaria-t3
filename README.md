@@ -1,29 +1,58 @@
-# Create T3 App
+# Plataforma Inmobiliaria
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+Aplicación full-stack para publicar y explorar propiedades en venta, construida con el T3 Stack.
 
-## What's next? How do I make an app with this?
+## Demo
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+> Agregar link de Vercel aquí una vez desplegado
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Stack
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- **Framework**: [Next.js](https://nextjs.org) (Pages Router)
+- **Lenguaje**: TypeScript
+- **API**: [tRPC](https://trpc.io) — tipado end-to-end sin código extra
+- **Base de datos**: PostgreSQL + [Prisma](https://prisma.io)
+- **Auth**: [NextAuth.js](https://next-auth.js.org) con JWT y bcrypt
+- **Estilos**: [Tailwind CSS](https://tailwindcss.com)
+- **Imágenes**: [Cloudinary](https://cloudinary.com)
+- **Tests**: [Vitest](https://vitest.dev)
+- **CI**: GitHub Actions
 
-## Learn More
+## Funcionalidades
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+- Registro e inicio de sesión con email y contraseña
+- Publicar, editar y eliminar propiedades (solo el dueño)
+- Subida de hasta 6 imágenes por propiedad
+- Búsqueda y filtros por precio y dormitorios
+- Paginación del listado
+- Rutas protegidas con middleware de Next.js
+- Validación de formularios por campo
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+## Setup local
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+### 1. Clonar e instalar
 
-## How do I deploy this?
+```bash
+git clone https://github.com/tu-usuario/plataforma-inmobiliaria.git
+cd plataforma-inmobiliaria
+npm install
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+
+Estructura
+
+src/
+├── components/     # Layout, ImageUploader, ErrorBoundary
+├── constants/      # Constantes globales (PAGE_SIZE, MAX_IMAGES)
+├── hooks/          # Custom hooks (useProperties, useProperty)
+├── pages/          # Rutas Next.js + handlers API
+├── server/         # tRPC routers + configuración NextAuth
+├── styles/         # CSS global con Tailwind
+└── __tests__/      # Tests unitarios con Vitest
+prisma/
+└── schema.prisma   # Modelos de base de datos
+
+Decisiones técnicas
+tRPC en lugar de REST: elimina la necesidad de definir tipos en cliente y servidor por separado
+JWT strategy en NextAuth: evita consultas extra a la base de datos en cada request
+Middleware de Next.js para proteger rutas: el redirect ocurre en el servidor antes de cargar la página
+next/image para optimización automática de imágenes (WebP, lazy loading, tamaños responsivos)

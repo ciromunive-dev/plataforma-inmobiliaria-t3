@@ -57,20 +57,46 @@ export default function NewPropertyPage() {
 
   return (
     <Layout>
-      <div className="max-w-xl mx-auto">
-        <Link href="/" className="text-sm text-blue-600 hover:underline mb-4 inline-block">
-          ← Volver al listado
+      <div className="max-w-2xl mx-auto">
+        <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 mb-6 transition-colors">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Volver al listado
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Nueva propiedad</h1>
+
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Nueva propiedad</h1>
+          <p className="text-sm text-gray-400 mt-1">Completa los datos para publicar tu propiedad</p>
+        </div>
 
         <Card>
           <form onSubmit={handleSubmit} className="space-y-5">
-            <Input label="Título" value={form.title} onChange={set("title")} error={fieldErrors.title} placeholder="Ej. Casa moderna en Miraflores" />
-            <Input label="Descripción" value={form.description} onChange={set("description")} error={fieldErrors.description} placeholder="Describe la propiedad..." />
-            <Input label="Precio (S/)" type="number" value={form.price} onChange={set("price")} error={fieldErrors.price} placeholder="280000" />
+            <Input
+              label="Título"
+              value={form.title}
+              onChange={set("title")}
+              error={fieldErrors.title}
+              placeholder="Ej. Casa moderna en Miraflores"
+            />
+            <Input
+              label="Descripción"
+              value={form.description}
+              onChange={set("description")}
+              error={fieldErrors.description}
+              placeholder="Describe la propiedad..."
+            />
+            <Input
+              label="Precio (S/)"
+              type="number"
+              value={form.price}
+              onChange={set("price")}
+              error={fieldErrors.price}
+              placeholder="280000"
+            />
 
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-2">Características</p>
+              <p className="text-sm font-semibold text-gray-700 mb-3">Características</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <Input label="Dormitorios" type="number" value={form.bedrooms} onChange={set("bedrooms")} error={fieldErrors.bedrooms} placeholder="3" />
                 <Input label="Baños" type="number" value={form.bathrooms} onChange={set("bathrooms")} error={fieldErrors.bathrooms} placeholder="2" />
@@ -81,13 +107,16 @@ export default function NewPropertyPage() {
             <ImageUploader images={images} onChange={setImages} folder="temp" />
 
             {error && (
-              <div role="alert" className="bg-red-50 text-red-600 text-sm px-4 py-2.5 rounded-lg border border-red-200">
+              <div role="alert" className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-xl border border-red-100 flex items-center gap-2">
+                <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
                 {error}
               </div>
             )}
 
-            <Button type="submit" fullWidth loading={createMutation.isPending}>
-              Crear propiedad
+            <Button type="submit" fullWidth loading={createMutation.isPending} size="lg">
+              Publicar propiedad
             </Button>
           </form>
         </Card>

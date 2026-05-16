@@ -1,15 +1,21 @@
 import type { HTMLAttributes } from "react";
 
 type Props = HTMLAttributes<HTMLDivElement> & {
-  padding?: "sm" | "md" | "lg";
+  padding?: "none" | "sm" | "md" | "lg";
+  hover?: boolean;
 };
 
-const paddings = { sm: "p-3 sm:p-4", md: "p-4 sm:p-6", lg: "p-5 sm:p-8" };
+const paddings = { none: "", sm: "p-3 sm:p-4", md: "p-4 sm:p-6", lg: "p-5 sm:p-8" };
 
-export default function Card({ padding = "md", className = "", children, ...props }: Props) {
+export default function Card({ padding = "md", hover = false, className = "", children, ...props }: Props) {
   return (
     <div
-      className={`bg-white rounded-xl border border-gray-200 shadow-sm ${paddings[padding]} ${className}`}
+      className={`
+        bg-white rounded-2xl border border-gray-100 shadow-sm
+        ${paddings[padding]}
+        ${hover ? "transition-all duration-200 hover:shadow-md hover:border-gray-200 cursor-pointer" : ""}
+        ${className}
+      `}
       {...props}
     >
       {children}

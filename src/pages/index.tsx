@@ -2,6 +2,7 @@ import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout";
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useMemo } from "react";
 import Head from "next/head";
 
@@ -64,7 +65,6 @@ export default function Home() {
         <p className="text-gray-500 mt-1">Explora las propiedades disponibles en nuestra plataforma</p>
       </div>
 
-      {/* Barra de búsqueda */}
       <div className="mb-6 space-y-3">
         <div className="flex gap-2">
           <input
@@ -122,7 +122,6 @@ export default function Home() {
         )}
       </div>
 
-      {/* Resultados */}
       {isLoading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -171,13 +170,14 @@ export default function Home() {
                 href={`/properties/${property.id}`}
                 className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow block"
               >
-                <div className="h-48 bg-gray-100 overflow-hidden">
+                <div className="relative h-48 bg-gray-100">
                   {property.images && property.images.length > 0 ? (
-                    <img
-                      src={property.images[0]}
+                    <Image
+                      src={property.images[0]!}
                       alt={property.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => (e.currentTarget.src = "https://placehold.co/400x200?text=Sin+imagen")}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
@@ -203,7 +203,6 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Paginación */}
           {!isFiltering && data && data.pageCount > 1 && (
             <div className="flex items-center justify-center gap-2 mt-10">
               <button

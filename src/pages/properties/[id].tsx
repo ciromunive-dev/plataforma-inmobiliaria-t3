@@ -4,6 +4,7 @@ import Layout from "~/components/Layout";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import ImageUploader from "~/components/ImageUploader";
 import Head from "next/head";
 
@@ -108,14 +109,16 @@ export default function PropertyDetailPage() {
 
         {!editing ? (
           <>
-            {/* Galería */}
             {property.images && property.images.length > 0 ? (
               <div className="mb-6">
-                <div className="aspect-video w-full rounded-xl overflow-hidden bg-gray-100 mb-2">
-                  <img
-                    src={property.images[activeImage]}
+                <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-gray-100 mb-2">
+                  <Image
+                    src={property.images[activeImage]!}
                     alt={property.title}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 768px"
+                    priority
                   />
                 </div>
                 {property.images.length > 1 && (
@@ -124,11 +127,17 @@ export default function PropertyDetailPage() {
                       <button
                         key={i}
                         onClick={() => setActiveImage(i)}
-                        className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
+                        className={`relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
                           activeImage === i ? "border-blue-500" : "border-transparent"
                         }`}
                       >
-                        <img src={url} alt={`Miniatura ${i + 1}`} className="w-full h-full object-cover" />
+                        <Image
+                          src={url}
+                          alt={`Miniatura ${i + 1}`}
+                          fill
+                          className="object-cover"
+                          sizes="64px"
+                        />
                       </button>
                     ))}
                   </div>
@@ -210,11 +219,7 @@ export default function PropertyDetailPage() {
               ))}
             </div>
 
-            <ImageUploader
-              images={images}
-              onChange={setImages}
-              folder={String(id)}
-            />
+            <ImageUploader images={images} onChange={setImages} folder={String(id)} />
 
             <div className="flex gap-3">
               <button

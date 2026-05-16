@@ -1,49 +1,26 @@
 import { useSession } from "next-auth/react";
-import { api } from "~/utils/api";
+import { useState } from "react";
 import Layout from "~/components/Layout";
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useMemo } from "react";
 import Head from "next/head";
-
-type Filters = {
-  search: string;
-  minPrice: string;
-  maxPrice: string;
-  bedrooms: string;
-};
-
-const initialFilters: Filters = { search: "", minPrice: "", maxPrice: "", bedrooms: "" };
+import { useProperties } from "~/hooks/useProperties";
 
 export default function Home() {
   const { data: session } = useSession();
-  const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState<Filters>(initialFilters);
   const [showFilters, setShowFilters] = useState(false);
-
-  const { data, isLoading } = api.property.getAll.useQuery({ page });
-
-  const filtered = useMemo(() => {
-    if (!data?.items) return [];
-    return data.items.filter((p) => {
-      if (filters.search) {
-        const q = filters.search.toLowerCase();
-        if (!p.title.toLowerCase().includes(q) && !p.description.toLowerCase().includes(q)) return false;
-      }
-      if (filters.minPrice && p.price < Number(filters.minPrice)) return false;
-      if (filters.maxPrice && p.price > Number(filters.maxPrice)) return false;
-      if (filters.bedrooms && p.bedrooms < Number(filters.bedrooms)) return false;
-      return true;
-    });
-  }, [data?.items, filters]);
-
-  const activeFilterCount = Object.values(filters).filter(Boolean).length;
-  const isFiltering = activeFilterCount > 0;
-
-  const set = (key: keyof Filters) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFilters((f) => ({ ...f, [key]: e.target.value }));
-    setPage(1);
-  };
+  const {
+    data,
+    isLoading,
+    filtered,
+    filters,
+    setFilter,
+    clearFilters,
+    activeFilterCount,
+    isFiltering,
+    page,
+    setPage,
+  } = useProperties();
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -71,11 +48,11 @@ export default function Home() {
             type="text"
             placeholder="Buscar por título o descripción..."
             value={filters.search}
-            onChange={set("search")}
+            onChange={setFilter("search")}
             className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
           />
           <button
-            onClick={() => setShowFilters((v) => !v)}
+            onClick={() => setShowFilters((v: boolean) => !v)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
               showFilters || activeFilterCount > 0
                 ? "bg-blue-50 border-blue-300 text-blue-700"
@@ -91,7 +68,7 @@ export default function Home() {
           </button>
           {isFiltering && (
             <button
-              onClick={() => { setFilters(initialFilters); setPage(1); }}
+              onClick={clearFilters}
               className="px-4 py-2.5 rounded-lg border border-gray-300 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
             >
               Limpiar
@@ -103,15 +80,15 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Precio mínimo (S/)</label>
-              <input type="number" placeholder="0" value={filters.minPrice} onChange={set("minPrice")} className={inputClass} />
+              <input type="number" placeholder="0" value={filters.minPrice} onChange={setFilter("minPrice")} className={inputClass} />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Precio máximo (S/)</label>
-              <input type="number" placeholder="Sin límite" value={filters.maxPrice} onChange={set("maxPrice")} className={inputClass} />
+              <input type="number" placeholder="Sin límite" value={filters.maxPrice} onChange={setFilter("maxPrice")} className={inputClass} />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Dormitorios mínimos</label>
-              <select value={filters.bedrooms} onChange={set("bedrooms")} className={inputClass}>
+              <select value={filters.bedrooms} onChange={setFilter("bedrooms")} className={inputClass}>
                 <option value="">Cualquiera</option>
                 {[1, 2, 3, 4, 5].map((n) => (
                   <option key={n} value={n}>{n}+</option>
@@ -142,10 +119,7 @@ export default function Home() {
           {isFiltering ? (
             <>
               <p className="text-gray-400 text-lg">No hay propiedades que coincidan con los filtros.</p>
-              <button
-                onClick={() => { setFilters(initialFilters); setPage(1); }}
-                className="text-blue-600 hover:underline mt-3 inline-block text-sm"
-              >
+              <button onClick={clearFilters} className="text-blue-600 hover:underline mt-3 inline-block text-sm">
                 Limpiar filtros
               </button>
             </>
@@ -189,9 +163,7 @@ export default function Home() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-1 truncate">{property.title}</h3>
                   <p className="text-sm text-gray-500 mb-4 line-clamp-2">{property.description}</p>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-xl font-bold text-blue-600">
-                      S/ {property.price.toLocaleString()}
-                    </span>
+                    <span className="text-xl font-bold text-blue-600">S/ {property.price.toLocaleString()}</span>
                   </div>
                   <div className="flex gap-4 text-sm text-gray-600">
                     <span>🛏️ {property.bedrooms} dorm.</span>
@@ -212,21 +184,17 @@ export default function Home() {
               >
                 ← Anterior
               </button>
-
               {Array.from({ length: data.pageCount }, (_, i) => i + 1).map((p) => (
                 <button
                   key={p}
                   onClick={() => handlePageChange(p)}
                   className={`w-9 h-9 text-sm font-medium rounded-lg transition-colors ${
-                    p === page
-                      ? "bg-blue-600 text-white"
-                      : "border border-gray-300 hover:bg-gray-50 text-gray-700"
+                    p === page ? "bg-blue-600 text-white" : "border border-gray-300 hover:bg-gray-50 text-gray-700"
                   }`}
                 >
                   {p}
                 </button>
               ))}
-
               <button
                 onClick={() => handlePageChange(page + 1)}
                 disabled={page === data.pageCount}

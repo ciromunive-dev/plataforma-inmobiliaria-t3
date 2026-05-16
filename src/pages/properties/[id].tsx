@@ -1,57 +1,34 @@
-import { useRouter } from "next/router";
 import Link from "next/link";
 import Layout from "~/components/Layout";
-import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
 import Image from "next/image";
 import ImageUploader from "~/components/ImageUploader";
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { useProperty } from "~/hooks/useProperty";
 
 export default function PropertyDetailPage() {
   const router = useRouter();
   const id = Number(router.query.id);
   const { data: session } = useSession();
-  const [editing, setEditing] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
-  const [activeImage, setActiveImage] = useState(0);
-  const [form, setForm] = useState({
-    title: "", description: "", price: "", bedrooms: "", bathrooms: "", area: "",
-  });
-  const [images, setImages] = useState<string[]>([]);
 
-  const { data: property, isLoading } = api.property.getById.useQuery(
-    { id },
-    { enabled: !!id },
-  );
-
-  useEffect(() => {
-    if (property) {
-      setForm({
-        title: property.title,
-        description: property.description,
-        price: String(property.price),
-        bedrooms: String(property.bedrooms),
-        bathrooms: String(property.bathrooms),
-        area: String(property.area),
-      });
-      setImages(property.images ?? []);
-      setActiveImage(0);
-    }
-  }, [property]);
-
-  const utils = api.useUtils();
-
-  const updateMutation = api.property.update.useMutation({
-    onSuccess: async () => {
-      await utils.property.getById.invalidate({ id });
-      setEditing(false);
-    },
-  });
-
-  const deleteMutation = api.property.delete.useMutation({
-    onSuccess: () => void router.push("/"),
-  });
+  const {
+    property,
+    isLoading,
+    editing,
+    setEditing,
+    confirmDelete,
+    setConfirmDelete,
+    activeImage,
+    setActiveImage,
+    form,
+    setForm,
+    images,
+    setImages,
+    handleUpdate,
+    updateMutation,
+    deleteMutation,
+  } = useProperty(id);
 
   if (isLoading) {
     return (
@@ -79,21 +56,6 @@ export default function PropertyDetailPage() {
   }
 
   const isOwner = session?.user?.id === String(property.userId);
-
-  const handleUpdate = (e: React.FormEvent) => {
-    e.preventDefault();
-    updateMutation.mutate({
-      id,
-      title: form.title,
-      description: form.description,
-      price: Number(form.price),
-      bedrooms: Number(form.bedrooms),
-      bathrooms: Number(form.bathrooms),
-      area: Number(form.area),
-      images,
-    });
-  };
-
   const inputClass = "w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm";
 
   return (
@@ -131,13 +93,7 @@ export default function PropertyDetailPage() {
                           activeImage === i ? "border-blue-500" : "border-transparent"
                         }`}
                       >
-                        <Image
-                          src={url}
-                          alt={`Miniatura ${i + 1}`}
-                          fill
-                          className="object-cover"
-                          sizes="64px"
-                        />
+                        <Image src={url} alt={`Miniatura ${i + 1}`} fill className="object-cover" sizes="64px" />
                       </button>
                     ))}
                   </div>
@@ -169,9 +125,7 @@ export default function PropertyDetailPage() {
               )}
             </div>
 
-            <p className="text-2xl font-bold text-blue-600 mb-6">
-              S/ {property.price.toLocaleString()}
-            </p>
+            <p className="text-2xl font-bold text-blue-600 mb-6">S/ {property.price.toLocaleString()}</p>
 
             <div className="flex gap-6 text-sm text-gray-600 mb-6 border-y border-gray-100 py-4">
               <span>🛏️ {property.bedrooms} dormitorios</span>

@@ -81,7 +81,7 @@ export default function ImageUploader({ images, onChange, folder }: Props) {
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") inputRef.current?.click(); }}
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => { e.preventDefault(); void handleFiles(e.dataTransfer.files); }}
-        className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
+        className={`border-2 border-dashed rounded-xl p-8 sm:p-6 text-center cursor-pointer transition-colors ${
           uploading ? "border-blue-300 bg-blue-50" : "border-gray-300 hover:border-blue-400 hover:bg-gray-50"
         } ${images.length >= MAX_IMAGES ? "opacity-40 pointer-events-none" : ""}`}
       >
@@ -113,7 +113,7 @@ export default function ImageUploader({ images, onChange, folder }: Props) {
       )}
 
       {images.length > 0 && (
-        <div className="mt-3 grid grid-cols-3 gap-2" role="list" aria-label="Imágenes subidas">
+        <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2" role="list" aria-label="Imágenes subidas">
           {images.map((url, i) => (
             <div key={i} role="listitem" className="relative group aspect-video">
               <img
@@ -125,7 +125,7 @@ export default function ImageUploader({ images, onChange, folder }: Props) {
                 type="button"
                 onClick={() => removeImage(i)}
                 aria-label={`Eliminar imagen ${i + 1}`}
-                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 text-sm flex items-center justify-center sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
               >
                 ×
               </button>

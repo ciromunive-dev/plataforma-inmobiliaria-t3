@@ -18,7 +18,7 @@ export default function Input({ label, error, id, className = "", ...props }: Pr
       <input
         id={inputId}
         className={`
-          w-full px-4 py-2.5 rounded-lg border text-sm outline-none
+          w-full px-4 py-3 sm:py-2.5 rounded-lg border text-base sm:text-sm outline-none
           transition-all duration-150
           focus:ring-2 focus:ring-blue-500 focus:border-blue-500
           disabled:bg-gray-50 disabled:text-gray-400
@@ -27,7 +27,7 @@ export default function Input({ label, error, id, className = "", ...props }: Pr
         `}
         {...props}
       />
-      {error && <p className="text-red-500 text-xs">{error}</p>}
+      {error && <p className="text-red-500 text-xs mt-0.5">{error}</p>}
     </div>
   );
 }

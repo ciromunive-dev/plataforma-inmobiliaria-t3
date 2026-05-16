@@ -1,6 +1,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import Button from "~/components/ui/Button";
 
 const navLinks = [
@@ -11,13 +12,26 @@ const navLinks = [
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
   const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-white border-b border-gray-200 h-14 flex items-center px-6 gap-4 fixed top-0 left-0 right-0 z-30">
+      <header className="bg-white border-b border-gray-200 h-14 flex items-center px-4 sm:px-6 gap-4 fixed top-0 left-0 right-0 z-30">
+        {session && (
+          <button
+            className="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 shrink-0"
+            onClick={() => setSidebarOpen((v) => !v)}
+            aria-label="Abrir menú"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        )}
+
         <Link
           href="/"
-          className={`text-lg font-bold text-blue-600 shrink-0 ${session ? "w-52" : ""}`}
+          className={`text-lg font-bold text-blue-600 shrink-0 ${session ? "md:w-52" : ""}`}
           aria-label="Ir al inicio"
         >
           Inmobiliaria
@@ -25,10 +39,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         <div className="flex-1" />
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {session ? (
             <>
-              <span className="text-sm text-gray-500 hidden sm:block">
+              <span className="text-sm text-gray-500 hidden lg:block truncate max-w-[160px]">
                 {session.user?.name ?? session.user?.email}
               </span>
               <Link href="/properties/new">
@@ -51,9 +65,25 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
+      {/* Overlay mobile */}
+      {session && sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-20 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       <div className="flex pt-14 flex-1">
         {session && (
-          <aside className="w-52 bg-white border-r border-gray-200 fixed top-14 left-0 bottom-0 z-20 flex flex-col py-4 px-3">
+          <aside
+            className={`
+              w-64 bg-white border-r border-gray-200 fixed top-14 left-0 bottom-0 z-20
+              flex flex-col py-4 px-3 transition-transform duration-200
+              md:translate-x-0 md:w-52
+              ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+            `}
+          >
             <nav aria-label="Navegación principal" className="flex flex-col gap-1">
               {navLinks.map((link) => {
                 const isActive = router.pathname === link.href;
@@ -61,7 +91,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    onClick={() => setSidebarOpen(false)}
+                    className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                       isActive
                         ? "bg-blue-50 text-blue-700"
                         : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
@@ -82,7 +113,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         <main
           id="main-content"
-          className={`flex-1 px-6 py-6 min-w-0 ${session ? "ml-52" : ""}`}
+          className={`flex-1 px-4 sm:px-6 py-6 min-w-0 ${session ? "md:ml-52" : ""}`}
         >
           {children}
         </main>

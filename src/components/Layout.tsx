@@ -1,55 +1,104 @@
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+
+const navLinks = [
+  { href: "/", label: "Inicio", icon: "🏠" },
+  { href: "/properties/my-properties", label: "Mis propiedades", icon: "📋" },
+];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
+  const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav aria-label="Navegación principal" className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="text-xl font-bold text-blue-600" aria-label="Ir al inicio">
-              Inmobiliaria
-            </Link>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Top navbar */}
+      <header className="bg-white border-b border-gray-200 h-14 flex items-center px-6 gap-4 fixed top-0 left-0 right-0 z-30">
+        <Link href="/" className="text-lg font-bold text-blue-600 w-52 shrink-0" aria-label="Ir al inicio">
+          🏡 Inmobiliaria
+        </Link>
 
-            <div className="flex items-center gap-3" role="group" aria-label="Acciones de usuario">
-              {session ? (
-                <>
-                  <Link
-                    href="/properties/new"
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    + Publicar propiedad
-                  </Link>
-                  <span className="text-sm text-gray-500" aria-label="Usuario actual">
-                    {session.user?.name || session.user?.email}
-                  </span>
-                  <button
-                    onClick={() => signOut()}
-                    aria-label="Cerrar sesión"
-                    className="px-4 py-2 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    Cerrar sesión
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => signIn()}
-                  aria-label="Iniciar sesión"
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Iniciar sesión
-                </button>
-              )}
+        <div className="flex-1" />
+
+        <div className="flex items-center gap-3">
+          {session ? (
+            <>
+              <span className="text-sm text-gray-500 hidden sm:block">
+                {session.user?.name ?? session.user?.email}
+              </span>
+              <Link
+                href="/properties/new"
+                className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                + Publicar
+              </Link>
+              <button
+                onClick={() => signOut()}
+                aria-label="Cerrar sesión"
+                className="px-3 py-1.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Salir
+              </button>
+            </>
+          ) : (
+            <div className="flex gap-2">
+              <Link
+                href="/auth/login"
+                className="px-3 py-1.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Iniciar sesión
+              </Link>
+              <Link
+                href="/auth/register"
+                className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Registrarse
+              </Link>
             </div>
-          </div>
+          )}
         </div>
-      </nav>
+      </header>
 
-      <main id="main-content" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
-      </main>
+      <div className="flex pt-14 flex-1">
+        {/* Sidebar */}
+        {session && (
+        <aside className="w-52 bg-white border-r border-gray-200 fixed top-14 left-0 bottom-0 z-20 flex flex-col py-4 px-3">
+          <nav aria-label="Navegación principal" className="flex flex-col gap-1">
+            {navLinks.map((link) => {
+              const isActive = router.pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  }`}
+                >
+                  <span>{link.icon}</span>
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
+          
+            <div className="mt-auto px-3 py-3 border-t border-gray-100">
+              <p className="text-xs text-gray-400 truncate">{session.user?.email}</p>
+            </div>
+          
+        </aside>
+        )}
+
+        {/* Main content */}
+        <main
+          id="main-content"
+          className={`flex-1 px-6 py-6 min-w-0 ${session ? "ml-52" : ""}`}
+        >
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

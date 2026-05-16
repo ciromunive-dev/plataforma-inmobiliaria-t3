@@ -10,6 +10,9 @@ const propertyInput = z.object({
   bathrooms: z.number().int().positive(),
   area: z.number().positive(),
   images: z.array(z.string().url()).max(6).default([]),
+  address: z.string().optional(),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
 });
 
 const PAGE_SIZE = 9;

@@ -4,6 +4,7 @@ import Link from "next/link";
 import Layout from "~/components/Layout";
 import { api } from "~/utils/api";
 import ImageUploader from "~/components/ImageUploader";
+import MapPicker from "~/components/MapPicker";
 import Button from "~/components/ui/Button";
 import Input from "~/components/ui/Input";
 import Card from "~/components/ui/Card";
@@ -18,6 +19,7 @@ export default function NewPropertyPage() {
   const [form, setForm] = useState({
     title: "", description: "", price: "", bedrooms: "", bathrooms: "", area: "",
   });
+  const [location, setLocation] = useState<{ latitude: number; longitude: number; address: string } | null>(null);
   const [images, setImages] = useState<string[]>([]);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState("");
@@ -46,7 +48,11 @@ export default function NewPropertyPage() {
     createMutation.mutate({
       title: form.title, description: form.description,
       price: Number(form.price), bedrooms: Number(form.bedrooms),
-      bathrooms: Number(form.bathrooms), area: Number(form.area), images,
+      bathrooms: Number(form.bathrooms), area: Number(form.area),
+      images,
+      address: location?.address,
+      latitude: location?.latitude,
+      longitude: location?.longitude,
     });
   };
 
@@ -72,28 +78,9 @@ export default function NewPropertyPage() {
 
         <Card>
           <form onSubmit={handleSubmit} className="space-y-5">
-            <Input
-              label="Título"
-              value={form.title}
-              onChange={set("title")}
-              error={fieldErrors.title}
-              placeholder="Ej. Casa moderna en Miraflores"
-            />
-            <Input
-              label="Descripción"
-              value={form.description}
-              onChange={set("description")}
-              error={fieldErrors.description}
-              placeholder="Describe la propiedad..."
-            />
-            <Input
-              label="Precio (S/)"
-              type="number"
-              value={form.price}
-              onChange={set("price")}
-              error={fieldErrors.price}
-              placeholder="280000"
-            />
+            <Input label="Título" value={form.title} onChange={set("title")} error={fieldErrors.title} placeholder="Ej. Casa moderna en Miraflores" />
+            <Input label="Descripción" value={form.description} onChange={set("description")} error={fieldErrors.description} placeholder="Describe la propiedad..." />
+            <Input label="Precio (S/)" type="number" value={form.price} onChange={set("price")} error={fieldErrors.price} placeholder="280000" />
 
             <div>
               <p className="text-sm font-semibold text-gray-700 mb-3">Características</p>
@@ -103,6 +90,13 @@ export default function NewPropertyPage() {
                 <Input label="Área (m²)" type="number" value={form.area} onChange={set("area")} error={fieldErrors.area} placeholder="90" />
               </div>
             </div>
+
+            <MapPicker
+              latitude={location?.latitude}
+              longitude={location?.longitude}
+              address={location?.address}
+              onChange={setLocation}
+            />
 
             <ImageUploader images={images} onChange={setImages} folder="temp" />
 

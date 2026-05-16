@@ -9,6 +9,8 @@ import { useProperty } from "~/hooks/useProperty";
 import Button from "~/components/ui/Button";
 import Input from "~/components/ui/Input";
 import Card from "~/components/ui/Card";
+import MapView from "~/components/MapView";
+import MapPicker from "~/components/MapPicker";
 
 export default function PropertyDetailPage() {
   const router = useRouter();
@@ -140,6 +142,17 @@ export default function PropertyDetailPage() {
               <p className="text-gray-700 leading-relaxed">{property.description}</p>
             </Card>
 
+            {property.latitude && property.longitude && (
+              <Card padding="md" className="mb-4">
+                <MapView
+                  latitude={property.latitude}
+                  longitude={property.longitude}
+                  address={property.address ?? undefined}
+                />
+              </Card>
+            )}
+
+
             {property.user && (
               <p className="text-xs text-gray-400 mt-2">
                 Publicado por <span className="font-medium text-gray-500">{property.user.name ?? property.user.email}</span>
@@ -170,6 +183,18 @@ export default function PropertyDetailPage() {
                   Cancelar
                 </Button>
               </div>
+              <MapPicker
+                latitude={form.latitude ? Number(form.latitude) : undefined}
+                longitude={form.longitude ? Number(form.longitude) : undefined}
+                address={form.address}
+                onChange={(data) => setForm((f) => ({
+                  ...f,
+                  latitude: String(data.latitude),
+                  longitude: String(data.longitude),
+                  address: data.address,
+                }))}
+              />
+
             </form>
           </Card>
         )}

@@ -65,6 +65,9 @@ model Property {
   bathrooms   Int
   area        Float
   images      String[]
+  address     String?
+  latitude    Float?
+  longitude   Float?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   userId      Int

@@ -9,6 +9,7 @@ export function useProperty(id: number) {
   const [activeImage, setActiveImage] = useState(0);
   const [form, setForm] = useState({
     title: "", description: "", price: "", bedrooms: "", bathrooms: "", area: "",
+    address: "", latitude: "", longitude: "",
   });
   const [images, setImages] = useState<string[]>([]);
 
@@ -26,6 +27,9 @@ export function useProperty(id: number) {
         bedrooms: String(property.bedrooms),
         bathrooms: String(property.bathrooms),
         area: String(property.area),
+        address: property.address ?? "",
+        latitude: property.latitude ? String(property.latitude) : "",
+        longitude: property.longitude ? String(property.longitude) : "",
       });
       setImages(property.images ?? []);
       setActiveImage(0);
@@ -56,24 +60,16 @@ export function useProperty(id: number) {
       bathrooms: Number(form.bathrooms),
       area: Number(form.area),
       images,
+      address: form.address || undefined,
+      latitude: form.latitude ? Number(form.latitude) : undefined,
+      longitude: form.longitude ? Number(form.longitude) : undefined,
     });
   };
 
   return {
-    property,
-    isLoading,
-    editing,
-    setEditing,
-    confirmDelete,
-    setConfirmDelete,
-    activeImage,
-    setActiveImage,
-    form,
-    setForm,
-    images,
-    setImages,
-    handleUpdate,
-    updateMutation,
-    deleteMutation,
+    property, isLoading, editing, setEditing,
+    confirmDelete, setConfirmDelete, activeImage, setActiveImage,
+    form, setForm, images, setImages, handleUpdate,
+    updateMutation, deleteMutation,
   };
 }

@@ -3,16 +3,24 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import Layout from "~/components/Layout";
 import { api } from "~/utils/api";
-import { useSession } from "next-auth/react";
 import ImageUploader from "~/components/ImageUploader";
+
+type FieldErrors = {
+  title?: string;
+  description?: string;
+  price?: string;
+  bedrooms?: string;
+  bathrooms?: string;
+  area?: string;
+};
 
 export default function NewPropertyPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
   const [form, setForm] = useState({
     title: "", description: "", price: "", bedrooms: "", bathrooms: "", area: "",
   });
   const [images, setImages] = useState<string[]>([]);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState("");
 
   const createMutation = api.property.create.useMutation({
@@ -20,24 +28,22 @@ export default function NewPropertyPage() {
     onError: (err) => setError(err.message),
   });
 
-  if (status === "loading") return null;
-
-  if (!session) {
-    return (
-      <Layout>
-        <div className="text-center py-20">
-          <p className="text-gray-500">Debes iniciar sesión para crear propiedades.</p>
-          <Link href="/auth/login" className="text-blue-600 hover:underline mt-4 inline-block">
-            Iniciar sesión
-          </Link>
-        </div>
-      </Layout>
-    );
-  }
+  const validate = (): boolean => {
+    const errors: FieldErrors = {};
+    if (!form.title.trim()) errors.title = "El título es requerido";
+    if (!form.description.trim()) errors.description = "La descripción es requerida";
+    if (!form.price || Number(form.price) <= 0) errors.price = "Ingresa un precio válido";
+    if (!form.bedrooms || Number(form.bedrooms) < 1) errors.bedrooms = "Mínimo 1 dormitorio";
+    if (!form.bathrooms || Number(form.bathrooms) < 1) errors.bathrooms = "Mínimo 1 baño";
+    if (!form.area || Number(form.area) <= 0) errors.area = "Ingresa un área válida";
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    if (!validate()) return;
     createMutation.mutate({
       title: form.title,
       description: form.description,
@@ -49,16 +55,19 @@ export default function NewPropertyPage() {
     });
   };
 
+  const clearError = (key: keyof FieldErrors) =>
+    setFieldErrors((f) => ({ ...f, [key]: undefined }));
+
   const field = (label: string, key: keyof typeof form, type = "text") => (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
       <input
         type={type}
         value={form[key]}
-        onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
-        required
-        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+        onChange={(e) => { setForm((f) => ({ ...f, [key]: e.target.value })); clearError(key); }}
+        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm ${fieldErrors[key] ? "border-red-400 bg-red-50" : "border-gray-300"}`}
       />
+      {fieldErrors[key] && <p className="text-red-500 text-xs mt-1">{fieldErrors[key]}</p>}
     </div>
   );
 
@@ -80,11 +89,7 @@ export default function NewPropertyPage() {
             {field("Área (m²)", "area", "number")}
           </div>
 
-          <ImageUploader
-            images={images}
-            onChange={setImages}
-            folder="temp"
-          />
+          <ImageUploader images={images} onChange={setImages} folder="temp" />
 
           {error && (
             <div className="bg-red-50 text-red-600 text-sm px-4 py-2.5 rounded-lg border border-red-200">

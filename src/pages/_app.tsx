@@ -6,6 +6,7 @@ import { httpBatchLink } from "@trpc/client";
 import { useState } from "react";
 import { SessionProvider } from "next-auth/react";
 import type { Session } from "next-auth";
+import ErrorBoundary from "~/components/ErrorBoundary";
 
 import "../styles/globals.css";
 
@@ -31,9 +32,11 @@ const MyApp = ({ Component, pageProps }: AppPropsWithSession) => {
     <SessionProvider session={pageProps.session}>
       <api.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
-          <div className={geist.className}>
-            <Component {...pageProps} />
-          </div>
+          <ErrorBoundary>
+            <div className={geist.className}>
+              <Component {...pageProps} />
+            </div>
+          </ErrorBoundary>
         </QueryClientProvider>
       </api.Provider>
     </SessionProvider>

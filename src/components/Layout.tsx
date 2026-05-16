@@ -16,52 +16,54 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-white border-b border-gray-200 h-14 flex items-center px-4 sm:px-6 gap-4 fixed top-0 left-0 right-0 z-30">
-        {session && (
-          <button
-            className="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 shrink-0"
-            onClick={() => setSidebarOpen((v) => !v)}
-            aria-label="Abrir menú"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-        )}
-
-        <Link
-          href="/"
-          className={`text-lg font-bold text-blue-600 shrink-0 ${session ? "md:w-52" : ""}`}
-          aria-label="Ir al inicio"
-        >
-          Inmobiliaria
-        </Link>
-
-        <div className="flex-1" />
-
-        <div className="flex items-center gap-2 sm:gap-3">
-          {session ? (
-            <>
-              <span className="text-sm text-gray-500 hidden lg:block truncate max-w-[160px]">
-                {session.user?.name ?? session.user?.email}
-              </span>
-              <Link href="/properties/new">
-                <Button variant="primary">+ Publicar</Button>
-              </Link>
-              <Button variant="outline" onClick={() => signOut()} aria-label="Cerrar sesión">
-                Salir
-              </Button>
-            </>
-          ) : (
-            <div className="flex gap-2">
-              <Link href="/auth/login">
-                <Button variant="outline">Iniciar sesión</Button>
-              </Link>
-              <Link href="/auth/register">
-                <Button variant="primary">Registrarse</Button>
-              </Link>
-            </div>
+      <header className="bg-white border-b border-gray-200 h-14 fixed top-0 left-0 right-0 z-30">
+        <div className="max-w-7xl mx-auto w-full h-full flex items-center px-4 sm:px-6 gap-4">
+          {session && (
+            <button
+              className="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 shrink-0"
+              onClick={() => setSidebarOpen((v) => !v)}
+              aria-label="Abrir menú"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
           )}
+
+          <Link
+            href="/"
+            className={`text-lg font-bold text-blue-600 shrink-0 ${session ? "md:w-52" : ""}`}
+            aria-label="Ir al inicio"
+          >
+            Inmobiliaria
+          </Link>
+
+          <div className="flex-1" />
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            {session ? (
+              <>
+                <span className="text-sm text-gray-500 hidden lg:block truncate max-w-[160px]">
+                  {session.user?.name ?? session.user?.email}
+                </span>
+                <Link href="/properties/new">
+                  <Button variant="primary">+ Publicar</Button>
+                </Link>
+                <Button variant="outline" onClick={() => signOut()} aria-label="Cerrar sesión">
+                  Salir
+                </Button>
+              </>
+            ) : (
+              <div className="flex gap-2">
+                <Link href="/auth/login">
+                  <Button variant="outline">Iniciar sesión</Button>
+                </Link>
+                <Link href="/auth/register">
+                  <Button variant="primary">Registrarse</Button>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 

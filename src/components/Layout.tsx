@@ -115,7 +115,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           id="main-content"
           className={`flex-1 px-4 sm:px-6 py-6 min-w-0 ${session ? "md:ml-52" : ""}`}
         >
-          {children}
+          <div className="max-w-7xl mx-auto w-full">
+            {children}
+          </div>
         </main>
       </div>
     </div>

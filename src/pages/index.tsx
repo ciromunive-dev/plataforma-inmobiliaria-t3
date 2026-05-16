@@ -3,6 +3,7 @@ import { api } from "~/utils/api";
 import Layout from "~/components/Layout";
 import Link from "next/link";
 import { useState, useMemo } from "react";
+import Head from "next/head";
 
 type Filters = {
   search: string;
@@ -52,6 +53,10 @@ export default function Home() {
 
   return (
     <Layout>
+      <Head>
+        <title>Propiedades | Plataforma Inmobiliaria</title>
+        <meta name="description" content="Explora propiedades en venta. Filtra por precio, dormitorios y más." />
+      </Head>
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">
           {session ? `Bienvenido, ${session.user?.name || session.user?.email}` : "Bienvenido"}

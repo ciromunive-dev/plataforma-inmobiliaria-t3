@@ -5,6 +5,7 @@ import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import ImageUploader from "~/components/ImageUploader";
+import Head from "next/head";
 
 export default function PropertyDetailPage() {
   const router = useRouter();
@@ -96,6 +97,10 @@ export default function PropertyDetailPage() {
 
   return (
     <Layout>
+      <Head>
+        <title>{property.title} | Plataforma Inmobiliaria</title>
+        <meta name="description" content={property.description.slice(0, 155)} />
+      </Head>
       <div className="max-w-3xl mx-auto">
         <Link href="/" className="text-sm text-blue-600 hover:underline mb-6 inline-block">
           ← Volver al listado

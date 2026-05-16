@@ -6,14 +6,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm border-b border-gray-200">
+      <nav aria-label="Navegación principal" className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="text-xl font-bold text-blue-600">
+            <Link href="/" className="text-xl font-bold text-blue-600" aria-label="Ir al inicio">
               Inmobiliaria
             </Link>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3" role="group" aria-label="Acciones de usuario">
               {session ? (
                 <>
                   <Link
@@ -22,11 +22,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   >
                     + Publicar propiedad
                   </Link>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-500" aria-label="Usuario actual">
                     {session.user?.name || session.user?.email}
                   </span>
                   <button
                     onClick={() => signOut()}
+                    aria-label="Cerrar sesión"
                     className="px-4 py-2 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     Cerrar sesión
@@ -35,6 +36,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               ) : (
                 <button
                   onClick={() => signIn()}
+                  aria-label="Iniciar sesión"
                   className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Iniciar sesión
@@ -45,7 +47,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main id="main-content" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </main>
     </div>

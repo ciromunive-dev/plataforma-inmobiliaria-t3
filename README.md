@@ -8,10 +8,12 @@ Plataforma web para publicar y explorar propiedades inmobiliarias. Construida co
 
 ## Screenshots
 
-<img src="screenshots/home.png" width="700" />
-<img src="screenshots/detalle.png" width="700" />
-<img src="screenshots/nueva-propiedad.png" width="700" />
-<img src="screenshots/mobile.png" width="300" />
+<div align="center">
+  <img src="screenshots/home.png" width="700" />
+  <img src="screenshots/detalle.png" width="700" />
+  <img src="screenshots/nueva-propiedad.png" width="700" />
+  <img src="screenshots/mobile.png" width="300" />
+</div>
 
 ---
 

@@ -213,7 +213,7 @@ npm run test:e2e   # En otra terminal
 
 Este proyecto está diseñado para desplegarse en [Vercel](https://vercel.com/) con base de datos en [Neon](https://neon.tech/) (PostgreSQL serverless gratuito).
 
-> Link al deploy: _próximamente_
+> Link al deploy: [plataforma-inmobiliaria-t3.vercel.app](https://plataforma-inmobiliaria-t3.vercel.app/)
 
 ---
 

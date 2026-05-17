@@ -10,6 +10,12 @@ import ErrorBoundary from "~/components/ErrorBoundary";
 
 import "../styles/globals.css";
 
+function getBaseUrl() {
+  if (typeof window !== "undefined") return "";
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return "http://localhost:3000";
+}
+
 const geist = Geist({
   subsets: ["latin"],
 });
@@ -22,7 +28,7 @@ const MyApp = ({ Component, pageProps }: AppPropsWithSession) => {
     api.createClient({
       links: [
         httpBatchLink({
-          url: "http://localhost:3000/api/trpc",
+          url: getBaseUrl() + "/api/trpc",
         }),
       ],
     }),

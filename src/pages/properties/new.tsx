@@ -17,7 +17,7 @@ type FieldErrors = {
 export default function NewPropertyPage() {
   const router = useRouter();
   const [form, setForm] = useState({
-    title: "", description: "", price: "", bedrooms: "", bathrooms: "", area: "",
+    title: "", description: "", price: "", bedrooms: "", bathrooms: "", area: "", phone: "",
   });
   const [location, setLocation] = useState<{ latitude: number; longitude: number; address: string } | null>(null);
   const [images, setImages] = useState<string[]>([]);
@@ -50,6 +50,7 @@ export default function NewPropertyPage() {
       price: Number(form.price), bedrooms: Number(form.bedrooms),
       bathrooms: Number(form.bathrooms), area: Number(form.area),
       images,
+      phone: form.phone || undefined,
       address: location?.address,
       latitude: location?.latitude,
       longitude: location?.longitude,
@@ -90,6 +91,15 @@ export default function NewPropertyPage() {
                 <Input label="Área (m²)" type="number" value={form.area} onChange={set("area")} error={fieldErrors.area} placeholder="90" />
               </div>
             </div>
+
+            <Input
+              label="WhatsApp de contacto"
+              type="tel"
+              value={form.phone}
+              onChange={set("phone")}
+              placeholder="+51 999 999 999"
+              hint="Opcional. Los interesados podrán contactarte por WhatsApp."
+            />
 
             <MapPicker
               latitude={location?.latitude}

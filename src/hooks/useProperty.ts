@@ -9,7 +9,7 @@ export function useProperty(id: number) {
   const [activeImage, setActiveImage] = useState(0);
   const [form, setForm] = useState({
     title: "", description: "", price: "", bedrooms: "", bathrooms: "", area: "",
-    address: "", latitude: "", longitude: "",
+    address: "", latitude: "", longitude: "", phone: "",
   });
   const [images, setImages] = useState<string[]>([]);
 
@@ -30,6 +30,7 @@ export function useProperty(id: number) {
         address: property.address ?? "",
         latitude: property.latitude ? String(property.latitude) : "",
         longitude: property.longitude ? String(property.longitude) : "",
+        phone: property.phone ?? "",
       });
       setImages(property.images ?? []);
       setActiveImage(0);
@@ -63,6 +64,7 @@ export function useProperty(id: number) {
       address: form.address || undefined,
       latitude: form.latitude ? Number(form.latitude) : undefined,
       longitude: form.longitude ? Number(form.longitude) : undefined,
+      phone: form.phone || undefined,
     });
   };
 

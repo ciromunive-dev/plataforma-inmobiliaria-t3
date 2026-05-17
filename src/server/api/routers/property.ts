@@ -13,6 +13,7 @@ const propertyInput = z.object({
   address: z.string().optional(),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
+  phone: z.string().optional(),
 });
 
 const PAGE_SIZE = 9;
@@ -31,12 +32,7 @@ export const propertyRouter = createTRPCRouter({
         }),
         ctx.db.property.count(),
       ]);
-      return {
-        items,
-        total,
-        pageCount: Math.ceil(total / PAGE_SIZE),
-        page: input.page,
-      };
+      return { items, total, pageCount: Math.ceil(total / PAGE_SIZE), page: input.page };
     }),
 
   getById: publicProcedure

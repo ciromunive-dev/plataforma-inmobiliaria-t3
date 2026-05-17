@@ -9,6 +9,9 @@ const propertyInput = z.object({
   bathrooms: z.number().int().positive(),
   area: z.number().positive(),
   images: z.array(z.string().url()).max(6).default([]),
+  address: z.string().optional(),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
 });
 
 const validProperty = {
@@ -78,8 +81,35 @@ describe("propertyInput schema", () => {
     const { images: _, ...withoutImages } = validProperty;
     const result = propertyInput.safeParse(withoutImages);
     expect(result.success).toBe(true);
+    if (result.success) expect(result.data.images).toEqual([]);
+  });
+
+  it("acepta propiedad con ubicación completa", () => {
+    const result = propertyInput.safeParse({
+      ...validProperty,
+      address: "Av. Larco 123, Miraflores, Lima",
+      latitude: -12.1191,
+      longitude: -77.0491,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("acepta propiedad sin ubicación (campos opcionales)", () => {
+    const result = propertyInput.safeParse(validProperty);
+    expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.images).toEqual([]);
+      expect(result.data.address).toBeUndefined();
+      expect(result.data.latitude).toBeUndefined();
+      expect(result.data.longitude).toBeUndefined();
     }
+  });
+
+  it("acepta latitud en rango válido de Perú", () => {
+    const result = propertyInput.safeParse({
+      ...validProperty,
+      latitude: -12.0464,
+      longitude: -77.0428,
+    });
+    expect(result.success).toBe(true);
   });
 });

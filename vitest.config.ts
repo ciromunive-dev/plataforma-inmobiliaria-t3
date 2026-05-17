@@ -11,5 +11,6 @@ export default defineConfig({
       DATABASE_URL: "postgresql://postgres:admin123@localhost:5432/plataforma_inmobiliaria_test",
     },
     setupFiles: ["dotenv/config"],
+    exclude: ["node_modules", ".next/**", "e2e/**"],
   },
 });

@@ -5,7 +5,8 @@ import { Pool } from "pg";
 const TEST_DATABASE_URL =
   "postgresql://postgres:admin123@localhost:5432/plataforma_inmobiliaria_test";
 
-const pool = new Pool({ connectionString: TEST_DATABASE_URL });
+// Pool con una sola conexión para evitar race conditions entre queries paralelas en tests
+const pool = new Pool({ connectionString: TEST_DATABASE_URL, max: 1 });
 const adapter = new PrismaPg(pool);
 
 export const testDb = new PrismaClient({ adapter });

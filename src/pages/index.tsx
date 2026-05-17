@@ -57,7 +57,7 @@ export default function Home() {
                 </Button>
               </Link>
               <Link href="/auth/login">
-                <Button size="lg" variant="outline" className="!border-white/40 !text-white hover:!bg-white/10">
+                <Button size="lg" variant="outline" className="!border-white !text-white hover:!bg-white hover:!text-blue-700">
                   Iniciar sesión
                 </Button>
               </Link>

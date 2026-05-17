@@ -28,6 +28,7 @@ Plataforma web para publicar y explorar propiedades inmobiliarias. Construida co
 - **Responsive design** — Mobile-first, funciona en móvil, tablet y desktop
 - **Ownership** — Solo el propietario puede editar o eliminar sus propiedades
 - **Tests unitarios** — 51 tests con Vitest cubriendo filtros, paginación, esquemas Zod y validación de formularios
+- **Tests de integración** — 7 tests contra DB real cubriendo registro, autenticación y ownership de propiedades
 
 ---
 
@@ -72,7 +73,9 @@ src/
 │   └── api/routers/
 │       ├── property.ts   # getAll, getById, create, update, delete
 │       └── auth.ts       # register
-└── ___tests___/           # 51 tests unitarios con Vitest
+└── ___tests__/
+    ├── *.test.ts          # 51 tests unitarios (filtros, paginación, Zod)
+    └── integration/       # 7 tests de integración contra DB real
 ```
 
 ---
@@ -139,7 +142,8 @@ npm run dev        # Servidor de desarrollo
 npm run build      # Build de producción
 npm run start      # Iniciar en producción
 npm run lint       # Verificar código con ESLint
-npm run test       # Ejecutar tests con Vitest
+npm run test              # Tests unitarios
+npm run test:integration  # Tests de integración (requiere DB local)
 npm run typecheck  # Verificar tipos TypeScript
 ```
 
@@ -163,7 +167,7 @@ Para ver el esquema completo: [`prisma/schema.prisma`](prisma/schema.prisma)
 npm run test
 ```
 
-51 tests unitarios cubriendo:
+**Unitarios** — 51 tests cubriendo lógica pura:
 
 | Archivo | Tests | Qué cubre |
 |---------|-------|-----------|
@@ -172,6 +176,21 @@ npm run test
 | `property-schema.test.ts` | 13 | Validación Zod del schema de propiedad |
 | `property-validation.test.ts` | 13 | Validación del formulario de nueva propiedad |
 | `filters.test.ts` | 5 | Conteo y limpieza de filtros activos |
+
+**Integración** — 7 tests contra DB real (PostgreSQL):
+
+| Archivo | Tests | Qué cubre |
+|---------|-------|-----------|
+| `auth.integration.test.ts` | 2 | Registro de usuario y email duplicado |
+| `property.integration.test.ts` | 5 | CRUD de propiedades y ownership |
+
+Para correr los tests de integración necesitas tener PostgreSQL local con la DB `plataforma_inmobiliaria_test` creada y migrada:
+
+```bash
+psql -U postgres -c "CREATE DATABASE plataforma_inmobiliaria_test;"
+npx prisma migrate deploy
+npm run test:integration
+```
 
 ---
 

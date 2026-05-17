@@ -28,7 +28,8 @@ Plataforma web para publicar y explorar propiedades inmobiliarias. Construida co
 - **Responsive design** — Mobile-first, funciona en móvil, tablet y desktop
 - **Ownership** — Solo el propietario puede editar o eliminar sus propiedades
 - **Tests unitarios** — 51 tests con Vitest cubriendo filtros, paginación, esquemas Zod y validación de formularios
-- **Tests de integración** — 7 tests contra DB real cubriendo registro, autenticación y ownership de propiedades
+- **Tests de integración** — 11 tests contra DB real cubriendo registro, CRUD completo, paginación y ownership
+- **Tests E2E** — 9 tests con Playwright cubriendo flujos de autenticación, creación, edición, eliminación y filtros
 
 ---
 
@@ -46,7 +47,7 @@ Plataforma web para publicar y explorar propiedades inmobiliarias. Construida co
 | Imágenes | [Cloudinary](https://cloudinary.com/) |
 | Mapas | [Leaflet](https://leafletjs.com/) + [OpenStreetMap](https://www.openstreetmap.org/) |
 | Geocoding | [Nominatim API](https://nominatim.org/) (gratuito) |
-| Testing | [Vitest](https://vitest.dev/) |
+| Testing | [Vitest](https://vitest.dev/) + [Playwright](https://playwright.dev/) |
 
 ---
 
@@ -142,8 +143,9 @@ npm run dev        # Servidor de desarrollo
 npm run build      # Build de producción
 npm run start      # Iniciar en producción
 npm run lint       # Verificar código con ESLint
-npm run test              # Tests unitarios
-npm run test:integration  # Tests de integración (requiere DB local)
+npm run test              # Tests unitarios e integración
+npm run test:integration  # Solo tests de integración (requiere DB local)
+npm run test:e2e          # Tests E2E con Playwright (requiere servidor corriendo)
 npm run typecheck  # Verificar tipos TypeScript
 ```
 
@@ -164,32 +166,45 @@ Para ver el esquema completo: [`prisma/schema.prisma`](prisma/schema.prisma)
 ## Tests
 
 ```bash
-npm run test
+npm run test              # Unitarios + integración
+npm run test:e2e          # E2E con Playwright
 ```
 
 **Unitarios** — 51 tests cubriendo lógica pura:
 
 | Archivo | Tests | Qué cubre |
 |---------|-------|-----------|
-| `property.test.ts` | 11 | Lógica de filtrado de propiedades |
+| `property.test.ts` | 9 | Lógica de filtrado de propiedades |
 | `pagination.test.ts` | 9 | Cálculos de paginación |
-| `property-schema.test.ts` | 13 | Validación Zod del schema de propiedad |
-| `property-validation.test.ts` | 13 | Validación del formulario de nueva propiedad |
-| `filters.test.ts` | 5 | Conteo y limpieza de filtros activos |
+| `property-schema.test.ts` | 14 | Validación Zod del schema de propiedad |
+| `property-validation.test.ts` | 12 | Validación del formulario de nueva propiedad |
+| `filters.test.ts` | 7 | Conteo y limpieza de filtros activos |
 
-**Integración** — 7 tests contra DB real (PostgreSQL):
+**Integración** — 11 tests contra DB real (PostgreSQL):
 
 | Archivo | Tests | Qué cubre |
 |---------|-------|-----------|
 | `auth.integration.test.ts` | 2 | Registro de usuario y email duplicado |
-| `property.integration.test.ts` | 5 | CRUD de propiedades y ownership |
+| `property.integration.test.ts` | 9 | CRUD completo, paginación y ownership |
 
-Para correr los tests de integración necesitas tener PostgreSQL local con la DB `plataforma_inmobiliaria_test` creada y migrada:
+Para correr los tests de integración necesitas PostgreSQL local con la DB `plataforma_inmobiliaria_test` creada y migrada:
 
 ```bash
 psql -U postgres -c "CREATE DATABASE plataforma_inmobiliaria_test;"
 npx prisma migrate deploy
 npm run test:integration
+```
+
+**E2E** — 9 tests con Playwright (requiere servidor corriendo en `localhost:3000`):
+
+| Archivo | Tests | Qué cubre |
+|---------|-------|-----------|
+| `auth.spec.ts` | 3 | Registro, login y error de credenciales |
+| `property.spec.ts` | 6 | Crear, editar, eliminar, listar, filtros y ownership |
+
+```bash
+npm run dev        # En una terminal
+npm run test:e2e   # En otra terminal
 ```
 
 ---

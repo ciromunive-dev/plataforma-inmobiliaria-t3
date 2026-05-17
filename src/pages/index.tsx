@@ -153,16 +153,16 @@ export default function Home() {
         {showFilters && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-3 border-t border-gray-100">
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Precio mínimo (S/)</label>
-              <input type="number" placeholder="0" value={filters.minPrice} onChange={setFilter("minPrice")} className={inputClass} />
+              <label htmlFor="filter-min-price" className="block text-xs font-semibold text-gray-600 mb-1.5">Precio mínimo (S/)</label>
+              <input id="filter-min-price" type="number" placeholder="0" value={filters.minPrice} onChange={setFilter("minPrice")} className={inputClass} />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Precio máximo (S/)</label>
-              <input type="number" placeholder="Sin límite" value={filters.maxPrice} onChange={setFilter("maxPrice")} className={inputClass} />
+              <label htmlFor="filter-max-price" className="block text-xs font-semibold text-gray-600 mb-1.5">Precio máximo (S/)</label>
+              <input id="filter-max-price" type="number" placeholder="Sin límite" value={filters.maxPrice} onChange={setFilter("maxPrice")} className={inputClass} />
             </div>
             <div className="sm:col-span-2 lg:col-span-1">
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Dormitorios mínimos</label>
-              <select value={filters.bedrooms} onChange={setFilter("bedrooms")} className={inputClass}>
+              <label htmlFor="filter-bedrooms" className="block text-xs font-semibold text-gray-600 mb-1.5">Dormitorios mínimos</label>
+              <select id="filter-bedrooms" value={filters.bedrooms} onChange={setFilter("bedrooms")} className={inputClass}>
                 <option value="">Cualquiera</option>
                 {[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n}+</option>)}
               </select>

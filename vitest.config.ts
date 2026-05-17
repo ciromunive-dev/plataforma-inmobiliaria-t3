@@ -12,5 +12,6 @@ export default defineConfig({
     },
     setupFiles: ["dotenv/config"],
     exclude: ["node_modules", ".next/**", "e2e/**"],
+    fileParallelism: false,
   },
 });

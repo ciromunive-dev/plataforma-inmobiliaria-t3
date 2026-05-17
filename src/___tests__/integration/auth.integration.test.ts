@@ -9,9 +9,6 @@ describe("auth router", () => {
     await cleanDb();
   });
 
-  afterAll(async () => {
-    await testDb.$disconnect();
-  });
 
   it("registra un usuario nuevo", async () => {
     const result = await caller.register({

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterAll } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { propertyRouter } from "~/server/api/routers/property";
 import { testDb, cleanDb } from "./helpers/test-db";
 
@@ -32,9 +32,6 @@ describe("property router", () => {
     await cleanDb();
   });
 
-  afterAll(async () => {
-    await testDb.$disconnect();
-  });
 
   it("crea una propiedad con sesión", async () => {
     const user = await createTestUser();
@@ -84,5 +81,60 @@ describe("property router", () => {
     await expect(
       callerWithSession(other.id).delete({ id: property.id })
     ).rejects.toThrow("No tienes permiso");
+  });
+
+  it("getAll con paginación devuelve 9 en página 1 y 1 en página 2", async () => {
+    const user = await createTestUser();
+    for (let i = 0; i < 10; i++) {
+      await testDb.property.create({
+        data: { ...propertyData, title: `Propiedad ${i + 1}`, userId: user.id },
+      });
+    }
+
+    const page1 = await publicCaller.getAll({ page: 1 });
+    const page2 = await publicCaller.getAll({ page: 2 });
+
+    expect(page1.items).toHaveLength(9);
+    expect(page1.total).toBe(10);
+    expect(page1.pageCount).toBe(2);
+    expect(page2.items).toHaveLength(1);
+  });
+
+  it("getById devuelve la propiedad correcta", async () => {
+    const user = await createTestUser();
+    const created = await testDb.property.create({
+      data: { ...propertyData, userId: user.id },
+    });
+
+    const result = await publicCaller.getById({ id: created.id });
+
+    expect(result).not.toBeNull();
+    expect(result!.id).toBe(created.id);
+    expect(result!.title).toBe(propertyData.title);
+  });
+
+  it("el owner puede actualizar su propiedad", async () => {
+    const owner = await createTestUser();
+    const property = await callerWithSession(owner.id).create(propertyData);
+
+    const updated = await callerWithSession(owner.id).update({
+      id: property.id,
+      ...propertyData,
+      title: "Título actualizado",
+      price: 200000,
+    });
+
+    expect(updated.title).toBe("Título actualizado");
+    expect(updated.price).toBe(200000);
+  });
+
+  it("el owner puede eliminar su propiedad", async () => {
+    const owner = await createTestUser();
+    const property = await callerWithSession(owner.id).create(propertyData);
+
+    await callerWithSession(owner.id).delete({ id: property.id });
+
+    const deleted = await testDb.property.findUnique({ where: { id: property.id } });
+    expect(deleted).toBeNull();
   });
 });

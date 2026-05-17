@@ -23,6 +23,7 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   }
   return next({
     ctx: {
+      db: ctx.db,
       session: { ...ctx.session, user: ctx.session.user },
     },
   });

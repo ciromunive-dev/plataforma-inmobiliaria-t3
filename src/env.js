@@ -10,7 +10,7 @@ export const env = createEnv({
     DATABASE_URL: z.string().url(), // ← Validamos que sea un string y tenga formato de URL
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     NEXTAUTH_SECRET: z.string().min(1),
-    NEXTAUTH_URL: z.string().url(),
+    NEXTAUTH_URL: z.string().url().optional(),
     CLOUDINARY_URL: z.string().min(1),
 
   },

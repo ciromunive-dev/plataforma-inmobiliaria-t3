@@ -13,27 +13,35 @@ export const authRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const existing = await ctx.db.user.findUnique({
-        where: { email: input.email },
-      });
+      try {
+        const existing = await ctx.db.user.findUnique({
+          where: { email: input.email },
+        });
 
-      if (existing) {
+        if (existing) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "El email ya está registrado",
+          });
+        }
+
+        const hashedPassword = await bcrypt.hash(input.password, 10);
+
+        await ctx.db.user.create({
+          data: {
+            name: input.name ?? null,
+            email: input.email,
+            password: hashedPassword,
+          },
+        });
+
+        return { success: true };
+      } catch (e) {
+        if (e instanceof TRPCError) throw e;
         throw new TRPCError({
-          code: "CONFLICT",
-          message: "El email ya está registrado",
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al crear la cuenta, intenta de nuevo",
         });
       }
-
-      const hashedPassword = await bcrypt.hash(input.password, 10);
-
-      await ctx.db.user.create({
-        data: {
-          name: input.name ?? null,
-          email: input.email,
-          password: hashedPassword,
-        },
-      });
-
-      return { success: true };
     }),
 });

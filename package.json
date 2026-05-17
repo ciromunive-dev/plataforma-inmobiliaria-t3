@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "seed": "npx tsx prisma/seed.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:integration": "vitest run src/___tests__/integration"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",

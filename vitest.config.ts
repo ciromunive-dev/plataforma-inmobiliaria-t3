@@ -7,5 +7,9 @@ export default defineConfig({
   test: {
     environment: "node",
     globals: true,
+    env: {
+      DATABASE_URL: "postgresql://postgres:admin123@localhost:5432/plataforma_inmobiliaria_test",
+    },
+    setupFiles: ["dotenv/config"],
   },
 });
